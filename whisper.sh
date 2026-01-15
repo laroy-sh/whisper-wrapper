@@ -38,8 +38,13 @@ whisper() {
     -nt \
     -t 4 \
     -otxt \
-    -of "$out_dir/$base.md" \
+    -of "$out_dir/$base" \
     "$tmp_wav"
+
+  # Rename .txt to .md
+  if [[ -f "$out_dir/$base.txt" ]]; then
+    mv "$out_dir/$base.txt" "$out_dir/$base.md"
+  fi
 
   if [[ "$tmp_wav" != "$in" ]]; then
     rm -f "$tmp_wav"
