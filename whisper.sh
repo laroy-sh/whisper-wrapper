@@ -1,0 +1,47 @@
+#!/usr/bin/env zsh
+# whisper-wrapper - macOS shell wrapper for whisper.cpp
+# Provides GPU-accelerated transcription with automatic audio normalization
+
+whisper() {
+  local in="$1"
+  local out_dir="$HOME/Documents/Laroy"
+  local tmp_dir="/private/var/tmp"
+  local base tmp_wav
+
+  if [[ -z "$in" ]]; then
+    echo "usage: whisper <audio-or-video-file>"
+    return 1
+  fi
+
+  mkdir -p "$out_dir"
+
+  base="$(basename "$in")"
+  base="${base%.*}"
+  tmp_wav="$tmp_dir/${base}_whisper.wav"
+
+  case "${in##*.}" in
+    wav|WAV)
+      tmp_wav="$in"
+      ;;
+    *)
+      ffmpeg -y -i "$in" -ar 16000 -ac 1 -c:a pcm_s16le "$tmp_wav" \
+        >/dev/null 2>&1 || {
+          echo "ffmpeg conversion failed"
+          return 1
+        }
+      ;;
+  esac
+
+  ~/whisper.cpp/build/bin/whisper-cli \
+    -m "$HOME/whisper.cpp/models/ggml-small.bin" \
+    -l en \
+    -nt \
+    -t 4 \
+    -otxt \
+    -of "$out_dir/$base.md" \
+    "$tmp_wav"
+
+  if [[ "$tmp_wav" != "$in" ]]; then
+    rm -f "$tmp_wav"
+  fi
+}
