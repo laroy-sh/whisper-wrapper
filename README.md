@@ -27,6 +27,8 @@ cd whisper.cpp
 make clean
 WHISPER_METAL=1 make -j
 
+# The whisper-cli binary will be in: ~/whisper.cpp/build/bin/whisper-cli
+
 # Download the small model (or choose another size)
 bash ./models/download-ggml-model.sh small
 ```
@@ -90,8 +92,8 @@ whisper ~/Audio/interview.wav
 
 1. **Input handling** - Accepts any audio/video file path
 2. **Temporary conversion** - Converts to 16kHz mono WAV in `/private/var/tmp` (avoids cloud sync)
-3. **Transcription** - Uses whisper.cpp with Metal GPU acceleration and the small model
-4. **Output** - Saves transcript as `.md` file in `~/Documents/Laroy`
+3. **Transcription** - Uses `whisper-cli` from whisper.cpp with Metal GPU acceleration and the small model
+4. **Output** - Generates transcript as `.txt` and automatically renames to `.md` in `~/Documents/Laroy`
 5. **Cleanup** - Removes temporary WAV file
 
 ### Output Location
@@ -146,7 +148,8 @@ Remove the `-nt` flag to include timestamps in output.
 
 **"Model not found"**
 - Download the model: `bash ~/whisper.cpp/models/download-ggml-model.sh small`
-- Verify the path in the function matches your installation
+- Verify the model path exists: `~/whisper.cpp/models/ggml-small.bin`
+- Verify the whisper-cli binary exists: `~/whisper.cpp/build/bin/whisper-cli`
 
 **Slow transcription**
 - Ensure whisper.cpp was compiled with Metal: check for `WHISPER_METAL=1` in build
