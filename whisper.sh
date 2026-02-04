@@ -52,3 +52,5 @@ whisper() {
     rm -f "$tmp_wav"
   fi
 }
+
+whisper "$@"
