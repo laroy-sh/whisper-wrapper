@@ -4,12 +4,14 @@
 
 whisper() {
   local in="$1"
+  local lang="${2:-en}"
   local out_dir="$HOME/Documents/Laroy"
   local tmp_dir="/private/var/tmp"
   local base tmp_wav
 
   if [[ -z "$in" ]]; then
-    echo "usage: whisper <audio-or-video-file>"
+    echo "usage: whisper <audio-or-video-file> [language-code]"
+    echo "  language-code: en (default), ru (Russian), etc."
     return 1
   fi
 
@@ -34,7 +36,7 @@ whisper() {
 
   ~/whisper.cpp/build/bin/whisper-cli \
     -m "$HOME/whisper.cpp/models/ggml-small.bin" \
-    -l en \
+    -l "$lang" \
     -nt \
     -t 4 \
     -otxt \
