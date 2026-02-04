@@ -35,7 +35,7 @@ whisper() {
   esac
 
   ~/whisper.cpp/build/bin/whisper-cli \
-    -m "$HOME/whisper.cpp/models/ggml-small.bin" \
+    -m "$HOME/whisper.cpp/models/ggml-medium.bin" \
     -l "$lang" \
     -nt \
     -t 4 \
