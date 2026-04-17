@@ -10,7 +10,7 @@ A cross-platform shell wrapper around [whisper.cpp](https://github.com/ggerganov
 
 ## Features
 
-- **GPU-accelerated** — Metal on macOS, Vulkan on Linux/Windows
+- **GPU-accelerated** — Metal on macOS, Vulkan on Linux, CUDA on Windows
 - **Automatic audio normalization** — converts any format to 16kHz mono PCM via ffmpeg
 - **Smart file management** — temp files in system temp space (no cloud sync interference)
 - **Clean output** — transcript saved as `.md` in `~/Documents/Laroy`
@@ -162,7 +162,7 @@ Remove the `-nt` flag to include timestamps in the output.
 
 **GPU not detected (Windows)** — confirm the CUDA build: check the startup log for `ggml_cuda: found N CUDA devices`. If empty, verify the CUDA toolkit is installed and `nvcc` is on your PATH.
 
-**Slow transcription** — confirm GPU is being used (Vulkan device should appear in logs). Try a smaller model (`base.en`, `small.en`).
+**Slow transcription** — confirm GPU is being used (check startup logs for Vulkan/CUDA device detection). Try a smaller model (`base.en`, `small.en`).
 
 ---
 
