@@ -6,7 +6,7 @@ A cross-platform shell wrapper around [whisper.cpp](https://github.com/ggerganov
 |----------|--------|-------------|
 | macOS | `whisper-macos.sh` | Apple Metal |
 | Linux | `whisper-linux.sh` | Vulkan (AMD / NVIDIA / Intel) |
-| Windows | `whisper-windows.ps1` | Vulkan (AMD / NVIDIA / Intel) |
+| Windows | `whisper-windows.ps1` | NVIDIA CUDA |
 
 ## Features
 
@@ -41,9 +41,9 @@ cmake -B build -DGGML_VULKAN=1
 cmake --build build -j --config Release
 ```
 
-**Windows (Vulkan) — PowerShell:**
+**Windows (CUDA) — PowerShell:**
 ```powershell
-cmake -B build -DGGML_VULKAN=1
+cmake -B build -DGGML_CUDA=1
 cmake --build build -j --config Release
 ```
 
@@ -158,7 +158,9 @@ Remove the `-nt` flag to include timestamps in the output.
 
 **"No such file: whisper-cli"** — verify whisper.cpp was built successfully: `ls ~/whisper.cpp/build/bin/`.
 
-**GPU not detected (Linux/Windows)** — confirm the Vulkan build: check the startup log for `ggml_vulkan: Found N Vulkan devices`. If empty, install Vulkan drivers (`mesa-vulkan-drivers` on Ubuntu, vendor driver on Windows).
+**GPU not detected (Linux)** — confirm the Vulkan build: check the startup log for `ggml_vulkan: Found N Vulkan devices`. If empty, install Vulkan drivers (`mesa-vulkan-drivers` on Ubuntu).
+
+**GPU not detected (Windows)** — confirm the CUDA build: check the startup log for `ggml_cuda: found N CUDA devices`. If empty, verify the CUDA toolkit is installed and `nvcc` is on your PATH.
 
 **Slow transcription** — confirm GPU is being used (Vulkan device should appear in logs). Try a smaller model (`base.en`, `small.en`).
 

@@ -1,5 +1,5 @@
 # whisper-wrapper - Windows PowerShell wrapper for whisper.cpp
-# Provides Vulkan GPU-accelerated transcription with automatic audio normalization
+# Provides NVIDIA CUDA GPU-accelerated transcription with automatic audio normalization
 
 param(
     [Parameter(Mandatory=$true, Position=0)]
