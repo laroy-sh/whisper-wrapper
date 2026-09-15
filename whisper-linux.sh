@@ -72,4 +72,4 @@ whisperx() {
   rm -f "$wav" "/tmp/$base.json"  # kept on failure so diarisation can be re-run without re-transcribing
 }
 
-[[ "${BASH_SOURCE[0]}" == "$0" ]] && whisper "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then whisper "$@"; fi
