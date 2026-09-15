@@ -68,8 +68,8 @@ whisperx() {
   ffmpeg -y -i "$in" -ar 16000 -ac 1 -c:a pcm_s16le "$wav" >/dev/null 2>&1 || { echo "ffmpeg failed"; return 1; }
   ~/whisper.cpp/build/bin/whisper-cli -m "$HOME/whisper.cpp/models/ggml-medium.en.bin" -l "$lang" -t 4 \
     -oj -of "/tmp/$base" "$wav" >/dev/null &&
-  "$dir/.venv/bin/python" "$dir/diarize.py" "$wav" "/tmp/$base.json" "$out.md"
-  rm -f "$wav" "/tmp/$base.json"
+  "$dir/.venv/bin/python" "$dir/diarize.py" "$wav" "/tmp/$base.json" "$out.md" &&
+  rm -f "$wav" "/tmp/$base.json"  # kept on failure so diarisation can be re-run without re-transcribing
 }
 
 [[ "${BASH_SOURCE[0]}" == "$0" ]] && whisper "$@"
