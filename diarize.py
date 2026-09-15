@@ -2,6 +2,7 @@
 """whisper.cpp segments (JSON) + pyannote speakers -> markdown transcript with speaker labels."""
 import json, os, sys
 import soundfile as sf, torch
+torch.backends.cudnn.enabled = False  # ponytail: MIOpen LSTM kernel fails to build in pip ROCm wheel; native GPU LSTM instead
 from pyannote.audio import Pipeline
 
 wav, seg_json, out_md = sys.argv[1:4]
@@ -10,7 +11,7 @@ token = os.environ.get("HF_TOKEN") or open(os.path.expanduser("~/.cache/huggingf
 pipe = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", token=token).to(torch.device("cuda"))
 audio, sr = sf.read(wav, dtype="float32")
 turns = [(t.start, t.end, s) for t, _, s in
-         pipe({"waveform": torch.from_numpy(audio)[None], "sample_rate": sr}).itertracks(yield_label=True)]
+         pipe({"waveform": torch.from_numpy(audio)[None], "sample_rate": sr}).speaker_diarization.itertracks(yield_label=True)]
 
 def speaker(a, b):  # speaker with most overlap in [a,b]
     best = max(turns, key=lambda t: max(0, min(b, t[1]) - max(a, t[0])), default=None)
