@@ -28,3 +28,6 @@ Temporary Items
 *.swp
 *.swo
 *~
+
+# Python venv (ROCm torch + pyannote)
+.venv/

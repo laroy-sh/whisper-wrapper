@@ -174,3 +174,18 @@ MIT — see [LICENSE](LICENSE).
 
 - [whisper.cpp](https://github.com/ggml-org/whisper.cpp) by Georgi Gerganov
 - [OpenAI Whisper](https://github.com/openai/whisper) model
+
+## Speaker diarisation (Linux, AMD GPU)
+
+`whisperx <file>` runs whisper.cpp (Vulkan) for text and [pyannote 3.1](https://huggingface.co/pyannote/speaker-diarization-3.1) (ROCm torch) for speakers, merged by timestamp into `**SPEAKER_00** (mm:ss):` blocks. Not the CUDA-only whisperX package.
+
+```bash
+uv venv .venv
+uv pip install --python .venv/bin/python torch torchaudio --index-url https://download.pytorch.org/whl/rocm7.0
+uv pip install --python .venv/bin/python pyannote.audio soundfile numpy
+.venv/bin/hf auth login   # accept terms on pyannote/speaker-diarization-3.1 and pyannote/segmentation-3.0 first
+source whisper-linux.sh
+whisperx recording.mkv
+```
+
+`WHISPER_DIARIZE=1 whisper <file>` is the lighter option: whisper.cpp tinydiarize (`ggml-small.en-tdrz.bin`), speaker turns only, no labels.

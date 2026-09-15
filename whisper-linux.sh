@@ -34,8 +34,14 @@ whisper() {
       ;;
   esac
 
+  # ponytail: WHISPER_DIARIZE=1 -> tinydiarize (speaker turns only, en). Real labels need whisperX+pyannote.
+  local model="$HOME/whisper.cpp/models/ggml-medium.en.bin" extra=()
+  if [[ -n "$WHISPER_DIARIZE" ]]; then
+    model="$HOME/whisper.cpp/models/ggml-small.en-tdrz.bin"; extra=(-tdrz)
+  fi
+
   ~/whisper.cpp/build/bin/whisper-cli \
-    -m "$HOME/whisper.cpp/models/ggml-medium.en.bin" \
+    -m "$model" "${extra[@]}" \
     -l "$lang" \
     -nt \
     -t 4 \
@@ -53,4 +59,17 @@ whisper() {
   fi
 }
 
-whisper "$@"
+# whisperx: GPU transcription (Vulkan) + pyannote diarisation (ROCm) with speaker labels
+whisperx() {
+  local in="$1" lang="${2:-en}" dir; dir="$(dirname "${BASH_SOURCE[0]}")"
+  local base; base="$(basename "${in%.*}")"
+  local wav="/tmp/${base}_whisper.wav" out="$HOME/Documents/Laroy/$base"
+  [[ -z "$in" ]] && { echo "usage: whisperx <audio-or-video-file> [language-code]"; return 1; }
+  ffmpeg -y -i "$in" -ar 16000 -ac 1 -c:a pcm_s16le "$wav" >/dev/null 2>&1 || { echo "ffmpeg failed"; return 1; }
+  ~/whisper.cpp/build/bin/whisper-cli -m "$HOME/whisper.cpp/models/ggml-medium.en.bin" -l "$lang" -t 4 \
+    -oj -of "/tmp/$base" "$wav" >/dev/null &&
+  "$dir/.venv/bin/python" "$dir/diarize.py" "$wav" "/tmp/$base.json" "$out.md"
+  rm -f "$wav" "/tmp/$base.json"
+}
+
+[[ "${BASH_SOURCE[0]}" == "$0" ]] && whisper "$@"
